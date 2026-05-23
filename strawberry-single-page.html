@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Strawberry Order - Single Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui"]
+            },
+            colors: {
+              berry: {
+                50: "#fff1f5",
+                100: "#ffe4eb",
+                500: "#f43f5e",
+                600: "#e11d48",
+                700: "#be123c"
+              },
+              leaf: {
+                500: "#10b981",
+                600: "#059669"
+              }
+            },
+            boxShadow: {
+              soft: "0 20px 45px -20px rgba(225, 29, 72, 0.35)"
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-gradient-to-b from-rose-50 via-white to-emerald-50 text-slate-800 font-sans">
+    <main class="max-w-7xl mx-auto px-4 py-6 md:py-10">
+      <section class="grid lg:grid-cols-2 gap-6 lg:gap-10 items-stretch">
+        <div class="bg-white rounded-3xl shadow-soft border border-rose-100 p-5 sm:p-6 lg:p-8">
+          <p class="inline-flex items-center gap-2 text-xs font-semibold bg-rose-100 text-rose-700 px-3 py-1 rounded-full">Fresh Harvest Strawberry</p>
+          <h1 class="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-rose-700 leading-tight">Pesan Strawberry Premium, Segar Sampai Rumah</h1>
+          <p class="mt-3 text-sm sm:text-base text-slate-600">Pilih ukuran buah favoritmu, tentukan gram, dan langsung kirim pesanan ke WhatsApp.</p>
+
+          <div class="mt-6 rounded-2xl overflow-hidden ring-1 ring-rose-100">
+            <img
+              id="strawberryPreview"
+              src="https://images.unsplash.com/photo-1518635017498-87f514b751ba?auto=format&fit=crop&w=1400&q=80"
+              alt="Strawberry segar"
+              onerror="this.src='https://images.unsplash.com/photo-1518635017498-87f514b751ba?auto=format&fit=crop&w=1400&q=80'"
+              class="w-full h-56 sm:h-72 object-cover"
+            />
+          </div>
+
+          <div class="mt-6 grid gap-3" id="sizeCards">
+            <button type="button" data-size="Kecil" data-image="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=1400&q=80" class="text-left rounded-2xl p-4 bg-pink-50 border border-pink-200 hover:border-pink-300 transition">
+              <p class="font-semibold text-pink-700">Kecil</p>
+              <p class="text-sm text-slate-600">Cocok untuk selai atau jus harian.</p>
+            </button>
+            <button type="button" data-size="Sedang" data-image="https://images.unsplash.com/photo-1543528176-61b239494933?auto=format&fit=crop&w=1400&q=80" class="text-left rounded-2xl p-4 bg-sky-50 border border-sky-200 hover:border-sky-300 transition">
+              <p class="font-semibold text-sky-700">Sedang</p>
+              <p class="text-sm text-slate-600">Manis pas untuk camilan keluarga.</p>
+            </button>
+            <button type="button" data-size="Jumbo" data-image="https://images.unsplash.com/photo-1515679097368-22e68427d265?auto=format&fit=crop&w=1400&q=80" class="text-left rounded-2xl p-4 bg-emerald-50 border border-emerald-200 hover:border-emerald-300 transition">
+              <p class="font-semibold text-emerald-700">Jumbo</p>
+              <p class="text-sm text-slate-600">Paling puas dimakan langsung.</p>
+            </button>
+          </div>
+
+          <div class="mt-6 grid gap-3">
+            <div class="rounded-2xl p-4 bg-white border border-rose-100">
+              <p class="text-sm font-bold text-rose-700">Manfaat Buah Strawberry</p>
+              <p class="mt-1 text-sm text-slate-600">Kaya vitamin C, antioksidan, dan serat yang baik untuk daya tahan tubuh, kesehatan kulit, dan pencernaan.</p>
+            </div>
+            <div class="rounded-2xl p-4 bg-white border border-sky-100">
+              <p class="text-sm font-bold text-sky-700">Fun Fact Strawberry</p>
+              <p class="mt-1 text-sm text-slate-600">Strawberry bukan berry sejati, dan bijinya ada di luar buah. Satu buah bisa memiliki sekitar 150-200 biji kecil.</p>
+            </div>
+            <div class="rounded-2xl p-4 bg-white border border-emerald-100">
+              <p class="text-sm font-bold text-emerald-700">Cara Penyajian</p>
+              <p class="mt-1 text-sm text-slate-600">Nikmati langsung setelah dicuci, campurkan ke yogurt/oatmeal, dibuat jus/smoothie, atau jadikan topping dessert favorit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-soft border border-emerald-100 p-5 sm:p-6 lg:p-8">
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Form Pemesanan</h2>
+          <p class="mt-1 text-sm text-slate-500">Isi data berikut untuk proses order strawberry.</p>
+
+          <form id="orderForm" class="mt-6 space-y-5 sm:space-y-6">
+            <div>
+              <label for="nama" class="text-sm font-medium text-slate-700">Nama Lengkap</label>
+              <input id="nama" name="nama" type="text" required class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500" placeholder="Contoh: Budi Santoso" />
+            </div>
+
+            <div>
+              <label for="nohp" class="text-sm font-medium text-slate-700">Nomor WhatsApp</label>
+              <input id="nohp" name="nohp" type="tel" required class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500" placeholder="08xxxxxxxxxx" />
+            </div>
+
+            <div>
+              <label for="alamat" class="text-sm font-medium text-slate-700">Alamat Lengkap</label>
+              <textarea id="alamat" name="alamat" rows="4" required class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500" placeholder="Nama jalan, nomor rumah, RT/RW, kecamatan, kota"></textarea>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4 sm:gap-5">
+              <div>
+                <label for="kategori" class="text-sm font-medium text-slate-700">Kategori Ukuran Buah</label>
+                <select id="kategori" name="kategori" class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500">
+                  <option value="Kecil">Kecil</option>
+                  <option value="Sedang">Sedang</option>
+                  <option value="Jumbo">Jumbo</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="berat" class="text-sm font-medium text-slate-700">Jumlah Berat</label>
+                <select id="berat" name="berat" class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500"></select>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-rose-100 bg-rose-50 p-4">
+              <p class="text-sm text-slate-600">Estimasi Harga</p>
+              <p id="priceText" class="mt-1 text-xl font-extrabold text-rose-700">Pilih kategori dan berat</p>
+              <p id="priceHint" class="mt-1 text-xs text-slate-500">Berat harus kelipatan 500 gram (500, 1000, 1500, dst).</p>
+              <p class="mt-2 text-xs text-slate-500">Harga belum termasuk ongkos kirim dan ongkos kirim akan diinfokan melalui WhatsApp.</p>
+            </div>
+
+            <div class="pt-1">
+              <p class="text-sm font-medium text-slate-700 mb-3">Metode Pembayaran</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4" id="paymentCards">
+                <label class="group cursor-pointer">
+                  <input type="radio" name="pembayaran" value="Bank Transfer Mandiri" class="peer sr-only" checked />
+                  <div class="rounded-xl border border-slate-200 p-4 peer-checked:border-rose-500 peer-checked:bg-rose-50 group-hover:border-rose-300 transition">
+                    <p class="text-sm font-semibold">Bank Transfer Mandiri</p>
+                  </div>
+                </label>
+                <label class="group cursor-pointer">
+                  <input type="radio" name="pembayaran" value="Bank Transfer BCA" class="peer sr-only" />
+                  <div class="rounded-xl border border-slate-200 p-4 peer-checked:border-rose-500 peer-checked:bg-rose-50 group-hover:border-rose-300 transition">
+                    <p class="text-sm font-semibold">Bank Transfer BCA</p>
+                  </div>
+                </label>
+                <label class="group cursor-pointer">
+                  <input type="radio" name="pembayaran" value="Cash" class="peer sr-only" />
+                  <div class="rounded-xl border border-slate-200 p-4 peer-checked:border-rose-500 peer-checked:bg-rose-50 group-hover:border-rose-300 transition">
+                    <p class="text-sm font-semibold">Cash</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-4 transition">Kirim Pesanan ke WhatsApp</button>
+            <div id="waFallback" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-3">
+              <p class="text-sm text-amber-800">Popup WhatsApp terblokir browser. Klik tombol ini:</p>
+              <a id="waFallbackLink" href="#" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700">Buka WhatsApp Manual</a>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <script>
+      const orderForm = document.getElementById('orderForm');
+      const submitButton = orderForm.querySelector('button[type="submit"]');
+      const API_BASE_URL = 'http://localhost:4000/api';
+      const strawberryPreview = document.getElementById('strawberryPreview');
+      const sizeCards = document.getElementById('sizeCards');
+      const kategoriSelect = document.getElementById('kategori');
+      const beratInput = document.getElementById('berat');
+      const priceText = document.getElementById('priceText');
+      const priceHint = document.getElementById('priceHint');
+      const waFallback = document.getElementById('waFallback');
+      const waFallbackLink = document.getElementById('waFallbackLink');
+      const MAX_GRAMS = 10000;
+
+      const PRICE_PER_500G = {
+        Kecil: 40000,
+        Sedang: 45000,
+        Jumbo: 50000
+      };
+
+      function formatRupiah(amount) {
+        return `Rp. ${new Intl.NumberFormat('id-ID').format(amount)}`;
+      }
+
+      function calculatePrice(category, gram) {
+        const basePrice = PRICE_PER_500G[category];
+        const numericGram = Number(gram);
+        if (!basePrice) return null;
+        if (!Number.isInteger(numericGram) || numericGram < 500 || numericGram % 500 !== 0) return null;
+        const multiplier = numericGram / 500;
+        return basePrice * multiplier;
+      }
+
+      function normalizePhone(phoneRaw) {
+        const digits = String(phoneRaw || '').replace(/\D/g, '');
+        if (digits.startsWith('0')) {
+          return `62${digits.slice(1)}`;
+        }
+        return digits;
+      }
+
+      function renderPrice() {
+        const category = kategoriSelect.value;
+        const gram = Number(beratInput.value);
+        const price = calculatePrice(category, gram);
+
+        if (!price) {
+          priceText.textContent = 'Harga belum tersedia';
+          priceHint.textContent = 'Masukkan berat kelipatan 500 gram agar harga tampil.';
+          return;
+        }
+
+        priceText.textContent = formatRupiah(price);
+        priceHint.textContent = `Kategori ${category} / ${gram} gram`;
+      }
+
+      function buildWeightOptions() {
+        const options = [];
+        for (let gram = 500; gram <= MAX_GRAMS; gram += 500) {
+          options.push(`<option value="${gram}">${gram} gram</option>`);
+        }
+        beratInput.innerHTML = options.join('');
+      }
+
+      sizeCards.addEventListener('click', function (event) {
+        const card = event.target.closest('button[data-size]');
+        if (!card) return;
+
+        const selectedSize = card.getAttribute('data-size');
+        const selectedImage = card.getAttribute('data-image');
+
+        if (selectedImage) {
+          strawberryPreview.src = selectedImage;
+        }
+
+        if (selectedSize) {
+          kategoriSelect.value = selectedSize;
+          renderPrice();
+        }
+      });
+
+      kategoriSelect.addEventListener('change', renderPrice);
+      beratInput.addEventListener('input', renderPrice);
+
+      orderForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(orderForm);
+        const nama = String(formData.get('nama') || '').trim();
+        const nohp = normalizePhone(String(formData.get('nohp') || ''));
+        const alamat = String(formData.get('alamat') || '').trim();
+        const kategori = String(formData.get('kategori') || '').trim();
+        const berat = String(formData.get('berat') || '').trim();
+        const pembayaran = String(formData.get('pembayaran') || '').trim();
+        const harga = calculatePrice(kategori, Number(berat));
+
+        if (nohp.length < 10 || nohp.length > 16) {
+          alert('Nomor WhatsApp tidak valid. Gunakan 10-16 digit angka.');
+          return;
+        }
+
+        if (!harga) {
+          alert('Berat harus kelipatan 500 gram (minimal 500 gram).');
+          return;
+        }
+
+        waFallback.classList.add('hidden');
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Menyimpan...';
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/orders`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: nama,
+              phone: nohp,
+              address: alamat,
+              category: kategori,
+              gram: Number(berat),
+              payment_method: pembayaran,
+              total_price: harga
+            })
+          });
+
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || 'Gagal menyimpan pesanan.');
+          }
+
+          setTimeout(function () {
+            const popup = window.open(result.whatsappUrl, '_blank');
+            if (!popup) {
+              waFallbackLink.href = result.whatsappUrl;
+              waFallback.classList.remove('hidden');
+            }
+          }, 500);
+
+          orderForm.reset();
+          renderPrice();
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Kirim Pesanan ke WhatsApp';
+        }
+      });
+
+      buildWeightOptions();
+      renderPrice();
+    </script>
+  </body>
+</html>
