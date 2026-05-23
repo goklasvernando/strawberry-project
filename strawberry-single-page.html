@@ -153,6 +153,9 @@
             </div>
 
             <button type="submit" class="w-full rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-4 transition">Kirim Pesanan ke WhatsApp</button>
+            <div id="successNotice" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+              <p class="text-sm text-emerald-800">Pesanan berhasil disimpan. WhatsApp akan dibuka otomatis...</p>
+            </div>
             <div id="waFallback" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-3">
               <p class="text-sm text-amber-800">Popup WhatsApp terblokir browser. Klik tombol ini:</p>
               <a id="waFallbackLink" href="#" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700">Buka WhatsApp Manual</a>
@@ -173,6 +176,7 @@
       const beratInput = document.getElementById('berat');
       const priceText = document.getElementById('priceText');
       const priceHint = document.getElementById('priceHint');
+      const successNotice = document.getElementById('successNotice');
       const waFallback = document.getElementById('waFallback');
       const waFallbackLink = document.getElementById('waFallbackLink');
       const MAX_GRAMS = 10000;
@@ -270,6 +274,7 @@
         }
 
         waFallback.classList.add('hidden');
+        successNotice.classList.add('hidden');
 
         submitButton.disabled = true;
         submitButton.textContent = 'Menyimpan...';
@@ -296,6 +301,7 @@
             throw new Error(result.error || 'Gagal menyimpan pesanan.');
           }
 
+          successNotice.classList.remove('hidden');
           setTimeout(function () {
             const popup = window.open(result.whatsappUrl, '_blank');
             if (!popup) {

@@ -12,12 +12,11 @@ const EXTRA_ALLOWED_ORIGINS = ['http://localhost:5500', 'http://127.0.0.1:5500']
 const PAYMENT_METHODS = [
   'Bank Transfer Mandiri',
   'Bank Transfer BCA',
-  'Cash',
-  'Other'
+  'Cash'
 ];
 
 const CATEGORIES = ['Kecil', 'Sedang', 'Jumbo'];
-const STATUSES = ['Pending', 'Diproses', 'Selesai'];
+const STATUSES = ['Pending', 'Diproses', 'Selesai', 'Batal'];
 
 const app = express();
 const server = http.createServer(app);
