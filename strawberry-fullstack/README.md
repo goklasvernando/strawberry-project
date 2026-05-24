@@ -112,6 +112,10 @@ Saat ini menggunakan `wa.me` link agar cepat dipakai. Jika ingin auto-send tanpa
 
 ## Changelog
 
+### 2026-05-24
+- Mengubah label hero di halaman pemesanan menjadi `Strawberry Segar`.
+- Menambahkan logo brand ke halaman pemesanan menggunakan file lokal `assets/strawberry-logo.jpeg`.
+
 ### 2026-05-23
 - Menambahkan opsi status `Batal` pada aksi Dashboard Admin (frontend + validasi backend).
 - Menampilkan kembali kolom `Alamat` pada tabel Dashboard Admin.
