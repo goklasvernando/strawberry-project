@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Strawberry Order - Single Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
       tailwind.config = {
         theme: {
@@ -42,7 +43,7 @@
         <div class="bg-white rounded-3xl shadow-soft border border-rose-100 p-5 sm:p-6 lg:p-8">
           <div class="inline-flex items-center gap-4">
             <img src="./assets/strawberry-logo.jpeg" alt="Logo Strawberry Segar" class="h-16 w-16 rounded-full object-cover" />
-            <p class="text-lg font-bold text-rose-700">Strawberry Segar</p>
+            <p class="text-lg font-bold text-rose-700">Strawberry Segar by dapoerhonas</p>
           </div>
           <h1 class="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-rose-700 leading-tight">Pesan Strawberry Premium, Segar Sampai Rumah</h1>
           <p class="mt-3 text-sm sm:text-base text-slate-600">Pilih ukuran buah favoritmu, tentukan gram, dan langsung kirim pesanan ke WhatsApp.</p>
@@ -92,6 +93,10 @@
           <p class="mt-1 text-sm text-slate-500">Isi data berikut untuk proses order strawberry.</p>
 
           <form id="orderForm" class="mt-6 space-y-5 sm:space-y-6">
+            <div aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;">
+              <label for="website">Website</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
             <div>
               <label for="nama" class="text-sm font-medium text-slate-700">Nama Lengkap</label>
               <input id="nama" name="nama" type="text" required class="mt-2 w-full rounded-xl border-slate-200 px-4 py-3 focus:border-rose-500 focus:ring-rose-500" placeholder="Contoh: Budi Santoso" />
@@ -154,6 +159,11 @@
               </div>
             </div>
 
+            <div>
+              <p class="text-sm font-medium text-slate-700 mb-3">Verifikasi Keamanan</p>
+              <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+            </div>
+
             <button type="submit" class="w-full rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-4 transition">Kirim Pesanan ke WhatsApp</button>
             <div id="successNotice" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-3">
               <p class="text-sm text-emerald-800">Pesanan berhasil disimpan. WhatsApp akan dibuka otomatis...</p>
@@ -164,6 +174,15 @@
             </div>
           </form>
         </div>
+      </section>
+
+      <section id="testimonialsSection" class="hidden mt-10 rounded-3xl border border-rose-100 bg-white p-5 shadow-soft sm:p-6 lg:p-8">
+        <div class="max-w-2xl">
+          <p class="text-sm font-bold text-rose-700">CERITA PELANGGAN</p>
+          <h2 class="mt-1 text-2xl font-extrabold text-slate-900 sm:text-3xl">Mereka suka strawberry kami</h2>
+          <p class="mt-2 text-sm text-slate-600 sm:text-base">Terima kasih untuk setiap cerita dan kepercayaan yang dibagikan.</p>
+        </div>
+        <div id="testimonialsList" class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
       </section>
 
     </main>
@@ -183,14 +202,16 @@
             <span>Facebook Page</span>
           </a>
         </div>
-        <p class="text-xs text-slate-500">© 2026 Strawberry Segar. All rights reserved.</p>
+        <p class="text-xs text-slate-500">© 2026 Dapoerhonas. All rights reserved.</p>
       </div>
     </footer>
 
     <script>
       const orderForm = document.getElementById('orderForm');
       const submitButton = orderForm.querySelector('button[type="submit"]');
-      const API_BASE_URL = 'http://localhost:4000/api';
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVcjuCGKcOcn2RGqAMpSkFFJwnHVYvU0CJ291rbqjIXPn1M8cWbWwta947k4Xi4LCR/exec';
+      const ADMIN_WHATSAPP_NUMBER = '6281220000956';
+      const formLoadedAt = Date.now();
       const strawberryPreview = document.getElementById('strawberryPreview');
       const sizeCards = document.getElementById('sizeCards');
       const kategoriSelect = document.getElementById('kategori');
@@ -200,6 +221,8 @@
       const successNotice = document.getElementById('successNotice');
       const waFallback = document.getElementById('waFallback');
       const waFallbackLink = document.getElementById('waFallbackLink');
+      const testimonialsSection = document.getElementById('testimonialsSection');
+      const testimonialsList = document.getElementById('testimonialsList');
       const MAX_GRAMS = 10000;
 
       const PRICE_PER_500G = {
@@ -227,6 +250,81 @@
           return `62${digits.slice(1)}`;
         }
         return digits;
+      }
+
+      function buildWhatsAppUrl(order) {
+        const message = [
+          '*NOTA PEMESANAN STRAWBERRY*',
+          '------------------------------',
+          `Nama       : ${order.name}`,
+          `No HP      : ${order.phone}`,
+          `Alamat     : ${order.address}`,
+          `Pesanan    : ${order.category} / ${order.gram} gram`,
+          `Pembayaran : ${order.paymentMethod}`,
+          `Harga      : ${formatRupiah(order.totalPrice)}`,
+          '------------------------------',
+          'Terima kasih, pesanan Anda sedang diproses.'
+        ].join('\n');
+
+        return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      }
+
+      function resetTurnstile() {
+        if (window.turnstile) {
+          window.turnstile.reset();
+        }
+      }
+
+      function renderTestimonials(testimonials) {
+        testimonialsList.replaceChildren();
+
+        testimonials.forEach(function (testimonial) {
+          const card = document.createElement('article');
+          card.className = 'rounded-2xl border border-rose-100 bg-rose-50/50 p-5';
+
+          if (testimonial.photo) {
+            const image = document.createElement('img');
+            image.className = 'mb-4 h-44 w-full rounded-xl object-cover';
+            image.src = testimonial.photo;
+            image.alt = `Foto testimonial dari ${testimonial.name}`;
+            image.loading = 'lazy';
+            image.referrerPolicy = 'no-referrer';
+            image.addEventListener('error', function () {
+              image.remove();
+            });
+            card.append(image);
+          }
+
+          const stars = document.createElement('p');
+          stars.className = 'text-base tracking-wide text-amber-500';
+          stars.textContent = '★'.repeat(testimonial.rating) + '☆'.repeat(5 - testimonial.rating);
+
+          const quote = document.createElement('p');
+          quote.className = 'mt-3 text-sm leading-6 text-slate-700';
+          quote.textContent = `“${testimonial.testimonial}”`;
+
+          const name = document.createElement('p');
+          name.className = 'mt-4 text-sm font-bold text-rose-700';
+          name.textContent = testimonial.name;
+
+          card.append(stars, quote, name);
+          testimonialsList.append(card);
+        });
+
+        testimonialsSection.classList.remove('hidden');
+      }
+
+      async function loadTestimonials() {
+        try {
+          const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=testimonials`);
+          const result = await response.json();
+          if (!response.ok || !result.ok || !Array.isArray(result.testimonials) || !result.testimonials.length) {
+            return;
+          }
+          renderTestimonials(result.testimonials);
+        } catch (error) {
+          console.warn('Testimonial tidak dapat dimuat.', error);
+        }
       }
 
       function renderPrice() {
@@ -283,6 +381,12 @@
         const berat = String(formData.get('berat') || '').trim();
         const pembayaran = String(formData.get('pembayaran') || '').trim();
         const harga = calculatePrice(kategori, Number(berat));
+        const turnstileToken = String(formData.get('cf-turnstile-response') || '').trim();
+
+        if (Date.now() - formLoadedAt < 2500) {
+          alert('Mohon isi form terlebih dahulu, lalu coba kirim kembali.');
+          return;
+        }
 
         if (nohp.length < 10 || nohp.length > 16) {
           alert('Nomor WhatsApp tidak valid. Gunakan 10-16 digit angka.');
@@ -294,6 +398,11 @@
           return;
         }
 
+        if (!turnstileToken) {
+          alert('Selesaikan verifikasi keamanan terlebih dahulu.');
+          return;
+        }
+
         waFallback.classList.add('hidden');
         successNotice.classList.add('hidden');
 
@@ -301,39 +410,52 @@
         submitButton.textContent = 'Menyimpan...';
 
         try {
-          const response = await fetch(`${API_BASE_URL}/orders`, {
+          const payload = new URLSearchParams({
+            name: nama,
+            phone: nohp,
+            address: alamat,
+            category: kategori,
+            gram: String(Number(berat)),
+            payment_method: pembayaran,
+            total_price: String(harga),
+            website: String(formData.get('website') || ''),
+            'cf-turnstile-response': turnstileToken
+          });
+
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: nama,
-              phone: nohp,
-              address: alamat,
-              category: kategori,
-              gram: Number(berat),
-              payment_method: pembayaran,
-              total_price: harga
-            })
+            body: payload
           });
 
           const result = await response.json();
-          if (!response.ok) {
+          if (!response.ok || !result.ok) {
             throw new Error(result.error || 'Gagal menyimpan pesanan.');
           }
 
+          const whatsappUrl = buildWhatsAppUrl({
+            name: nama,
+            phone: nohp,
+            address: alamat,
+            category: kategori,
+            gram: Number(berat),
+            paymentMethod: pembayaran,
+            totalPrice: harga
+          });
+
           successNotice.classList.remove('hidden');
           setTimeout(function () {
-            const popup = window.open(result.whatsappUrl, '_blank');
+            const popup = window.open(whatsappUrl, '_blank');
             if (!popup) {
-              waFallbackLink.href = result.whatsappUrl;
+              waFallbackLink.href = whatsappUrl;
               waFallback.classList.remove('hidden');
             }
           }, 500);
 
           orderForm.reset();
+          resetTurnstile();
           renderPrice();
         } catch (error) {
+          resetTurnstile();
           alert(error.message);
         } finally {
           submitButton.disabled = false;
@@ -343,6 +465,7 @@
 
       buildWeightOptions();
       renderPrice();
+      loadTestimonials();
     </script>
   </body>
 </html>

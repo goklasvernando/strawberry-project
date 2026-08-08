@@ -18,3 +18,11 @@ Strawberry Project.
 - Menambahkan validasi nomor WhatsApp, notifikasi sukses, dan fallback jika popup WhatsApp diblokir.
 - Menambahkan kolom `total_price` di backend + tampilan harga/filter status/badge status di admin dashboard.
 - Menghapus folder `strawberry-store` yang tidak dipakai.
+
+### 2026-08-09
+- Mengalihkan form pemesanan utama ke Google Apps Script Web App untuk pencatatan pesanan pada Google Sheets.
+- Menambahkan validasi di browser, honeypot anti-spam, dan jeda minimum pengisian form.
+- Mempertahankan redirect WhatsApp hanya setelah Google Apps Script mengonfirmasi pesanan tercatat.
+- Menambahkan Cloudflare Turnstile mode development dan dokumentasi konfigurasi anti-spam di [`docs/google-apps-script.md`](docs/google-apps-script.md).
+- Menambahkan section testimonial yang mengambil maksimal enam testimonial berstatus `Tayang` dari tab Google Sheets `Testimonial`.
+- Menambahkan dukungan foto opsional pada kartu testimonial melalui URL publik di kolom `Foto`.
